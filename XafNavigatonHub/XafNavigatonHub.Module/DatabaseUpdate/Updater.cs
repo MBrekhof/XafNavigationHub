@@ -119,10 +119,10 @@ namespace XafNavigatonHub.Module.DatabaseUpdate
                 role.AddTypePermissionsRecursively<Department>(SecurityOperations.CRUDAccess, SecurityPermissionState.Allow);
                 role.AddTypePermissionsRecursively<ProjectTask>(SecurityOperations.CRUDAccess, SecurityPermissionState.Allow);
                 role.AddTypePermissionsRecursively<AuditLogEntry>(SecurityOperations.Read, SecurityPermissionState.Allow);
-                role.AddNavigationPermission("Application/NavigationItems/Items/Default/Items/Employee_ListView", SecurityPermissionState.Allow);
-                role.AddNavigationPermission("Application/NavigationItems/Items/Default/Items/Department_ListView", SecurityPermissionState.Allow);
-                role.AddNavigationPermission("Application/NavigationItems/Items/Default/Items/ProjectTask_ListView", SecurityPermissionState.Allow);
-                role.AddNavigationPermission("Application/NavigationItems/Items/Default/Items/AuditLogEntry_ListView", SecurityPermissionState.Allow);
+                role.AddNavigationPermission("Application/NavigationItems/Items/HR/Items/Employee_ListView", SecurityPermissionState.Allow);
+                role.AddNavigationPermission("Application/NavigationItems/Items/HR/Items/Department_ListView", SecurityPermissionState.Allow);
+                role.AddNavigationPermission("Application/NavigationItems/Items/Project Management/Items/ProjectTask_ListView", SecurityPermissionState.Allow);
+                role.AddNavigationPermission("Application/NavigationItems/Items/Project Management/Items/AuditLogEntry_ListView", SecurityPermissionState.Allow);
             }
             return role;
         }
@@ -137,9 +137,9 @@ namespace XafNavigatonHub.Module.DatabaseUpdate
                 role.AddTypePermissionsRecursively<Customer>(SecurityOperations.CRUDAccess, SecurityPermissionState.Allow);
                 role.AddTypePermissionsRecursively<SalesOrder>(SecurityOperations.CRUDAccess, SecurityPermissionState.Allow);
                 role.AddTypePermissionsRecursively<Product>(SecurityOperations.Read, SecurityPermissionState.Allow);
-                role.AddNavigationPermission("Application/NavigationItems/Items/Default/Items/Customer_ListView", SecurityPermissionState.Allow);
-                role.AddNavigationPermission("Application/NavigationItems/Items/Default/Items/SalesOrder_ListView", SecurityPermissionState.Allow);
-                role.AddNavigationPermission("Application/NavigationItems/Items/Default/Items/Product_ListView", SecurityPermissionState.Allow);
+                role.AddNavigationPermission("Application/NavigationItems/Items/Sales/Items/Customer_ListView", SecurityPermissionState.Allow);
+                role.AddNavigationPermission("Application/NavigationItems/Items/Sales/Items/SalesOrder_ListView", SecurityPermissionState.Allow);
+                role.AddNavigationPermission("Application/NavigationItems/Items/Sales/Items/Product_ListView", SecurityPermissionState.Allow);
             }
             return role;
         }
