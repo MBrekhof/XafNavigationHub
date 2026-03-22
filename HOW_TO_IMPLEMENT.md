@@ -282,8 +282,10 @@ The controller accepts either format:
 
 To find the correct value:
 1. Open the **Model Editor** in Visual Studio
-2. Navigate to **NavigationItems → Items → Default → Items**
+2. Navigate to **NavigationItems → Items → [Group] → Items**
 3. The `Id` of each item is the `ViewId` you need (e.g., `Employee_ListView`)
+
+**Note on navigation groups:** If your entities use `[NavigationItem("GroupName")]` (e.g., `[NavigationItem("HR")]`), the items appear under that group instead of `Default`. This affects navigation permission paths — use `Application/NavigationItems/Items/HR/Items/Employee_ListView` instead of `Application/NavigationItems/Items/Default/Items/Employee_ListView`.
 
 ### Role-Based Visibility
 
@@ -299,3 +301,54 @@ Both platforms automatically adapt to the active theme:
 - **WinForms**: Reads skin colors from `CommonSkins.GetSkin().SvgPalettes[Skin.DefaultSkinPaletteName]` using named palette colors ("Paint", "Paint High", "Brush", "Paint Shadow")
 
 No configuration needed — it follows whatever theme/skin is active.
+
+## Optional: RoleChooser Integration
+
+The [XafRoleChooser](https://github.com/MBrekhof/XafRoleChooser) module lets users selectively activate their assigned roles at runtime. When combined with NavigationHub, switching roles dynamically shows/hides hub cards based on the active roles' permissions — no logout or restart required.
+
+### Why It Works
+
+The NavigationHub reads from `ShowNavigationItemAction.Items`, which XAF filters by current permissions. RoleChooser overrides the `Roles` getter on the user class to return only active roles. When a user switches roles, RoleChooser calls `ReloadPermissions()` + `RecreateNavigationItems()` and navigates to the startup view, so the hub reloads with the updated card set automatically.
+
+### Integration Steps
+
+**1. Add a project reference** to the RoleChooser module from your shared Module project.
+
+**2. Change your `ApplicationUser` base class:**
+
+```csharp
+using RoleChooser.Security;
+
+public class ApplicationUser : RoleChooserUserBase, ISecurityUserWithLoginInfo, ISecurityUserLockout
+```
+
+This has **no schema impact** — `RoleChooserUserBase` adds no new properties, it only overrides the `Roles` getter with filtering logic.
+
+**3. Register in both frontends:**
+
+```csharp
+// Blazor Startup.cs — in ConfigureServices()
+services.AddRoleChooser();
+
+// In builder.Modules chain
+.Add<RoleChooser.RoleChooserModule>()
+```
+
+```csharp
+// WinForms Startup.cs — in BuildApplication()
+builder.Services.AddRoleChooser();
+
+// In builder.Modules chain
+.Add<RoleChooser.RoleChooserModule>()
+```
+
+**4. Ensure `PermissionsReloadMode.NoCache`** is set (required by RoleChooser):
+
+```csharp
+options.Events.OnSecurityStrategyCreated += securityStrategy =>
+{
+    ((SecurityStrategy)securityStrategy).PermissionsReloadMode = PermissionsReloadMode.NoCache;
+};
+```
+
+**5. Give users multiple roles** so role switching is meaningful. The "Active Roles" button appears automatically in the toolbar.

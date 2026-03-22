@@ -8,6 +8,8 @@ Track all pending, in-progress, and completed tasks here.
 
 ## Completed
 
+- [x] RoleChooser integration PoC (`rolechooser` branch) — dynamic role switching filters hub cards
+- [x] Split demo entities into individual files with `[NavigationItem]` group attributes
 - [x] Fix unpin security error + add "x" unpin button on pinned cards (both platforms)
 - [x] WinForms dark theme support (SVG palette colors)
 - [x] Blazor dark theme support (DX Design System CSS variables)

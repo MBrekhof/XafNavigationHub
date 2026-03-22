@@ -12,6 +12,7 @@ A **Navigation Hub / Launchpad** for DevExpress XAF that replaces sidebar naviga
 - **Dark theme support** — adapts to active skin/palette on both platforms
 - **Non-closable hub tab** — hub tab stays open in TabbedMDI on both platforms
 - **Model-driven configuration** — hub layout defined in XAF Application Model (no code changes needed to add/remove buttons)
+- **RoleChooser integration** (`rolechooser` branch) — optional [XafRoleChooser](https://github.com/MBrekhof/XafRoleChooser) module lets users switch active roles at runtime, dynamically showing/hiding hub cards
 
 ## Prerequisites
 
@@ -36,9 +37,10 @@ A **Navigation Hub / Launchpad** for DevExpress XAF that replaces sidebar naviga
    dotnet run --project XafNavigatonHub/XafNavigatonHub.Win
    ```
 5. Log in with one of the demo accounts (empty passwords in Debug mode):
-   - **Admin** — full access to all modules
-   - **HrManager** — HR and project management access
+   - **Admin** — full access (all roles: Administrators, HR, Sales)
+   - **HrManager** — HR + Sales access (can toggle roles with RoleChooser)
    - **SalesRep** — sales and CRM access
+   - **User** — basic access (Default role only)
 
 ## Project Structure
 
