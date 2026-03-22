@@ -10,6 +10,7 @@ using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl.EF.PermissionPolicy;
 using DevExpress.XtraEditors;
 using Microsoft.EntityFrameworkCore;
+using RoleChooser;
 using System.Configuration;
 
 namespace XafNavigatonHub.Win
@@ -25,6 +26,7 @@ namespace XafNavigatonHub.Win
             // builder.UseServiceProviderFactory(new DryIocServiceProviderFactory());
             // builder.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
+            builder.Services.AddRoleChooser();
             builder.UseApplication<XafNavigatonHubWindowsFormsApplication>();
             builder.Modules
                 .AddCharts()
@@ -51,6 +53,7 @@ namespace XafNavigatonHub.Win
                 })
                 .AddViewVariants()
                 .Add<XafNavigatonHub.Module.XafNavigatonHubModule>()
+                .Add<RoleChooser.RoleChooserModule>()
                 .Add<XafNavigatonHubWinModule>();
             builder.ObjectSpaceProviders
                 .AddSecuredEFCore(options =>

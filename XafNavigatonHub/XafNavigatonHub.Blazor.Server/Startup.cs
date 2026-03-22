@@ -7,6 +7,7 @@ using DevExpress.Persistent.BaseImpl.EF.PermissionPolicy;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Server.Circuits;
 using Microsoft.EntityFrameworkCore;
+using RoleChooser;
 using XafNavigatonHub.Blazor.Server.Services;
 
 namespace XafNavigatonHub.Blazor.Server
@@ -30,6 +31,7 @@ namespace XafNavigatonHub.Blazor.Server
             services.AddServerSideBlazor();
             services.AddHttpContextAccessor();
             services.AddScoped<CircuitHandler, CircuitHandlerProxy>();
+            services.AddRoleChooser();
             services.AddXaf(Configuration, builder =>
             {
                 builder.UseApplication<XafNavigatonHubBlazorApplication>();
@@ -55,6 +57,7 @@ namespace XafNavigatonHub.Blazor.Server
                     })
                     .AddViewVariants()
                     .Add<XafNavigatonHub.Module.XafNavigatonHubModule>()
+                    .Add<RoleChooser.RoleChooserModule>()
                     .Add<XafNavigatonHubBlazorModule>();
                 builder.ObjectSpaceProviders
                     .AddSecuredEFCore(options =>
