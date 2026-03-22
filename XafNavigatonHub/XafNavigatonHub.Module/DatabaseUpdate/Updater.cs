@@ -36,6 +36,8 @@ namespace XafNavigatonHub.Module.DatabaseUpdate
             // If a role doesn't exist in the database, create this role
             var defaultRole = CreateDefaultRole();
             var adminRole = CreateAdminRole();
+            var hrRole = CreateHrRole();
+            var salesRole = CreateSalesRole();
 
             ObjectSpace.CommitChanges(); //This line persists created object(s).
 
@@ -44,40 +46,34 @@ namespace XafNavigatonHub.Module.DatabaseUpdate
             // If a user named 'User' doesn't exist in the database, create this user
             if (userManager.FindUserByName<ApplicationUser>(ObjectSpace, "User") == null)
             {
-                // Set a password if the standard authentication type is used
                 string EmptyPassword = "";
                 _ = userManager.CreateUser<ApplicationUser>(ObjectSpace, "User", EmptyPassword, (user) =>
                 {
-                    // Add the Users role to the user
                     user.Roles.Add(defaultRole);
                 });
             }
 
-            // If a user named 'Admin' doesn't exist in the database, create this user
+            // Admin gets all roles for full RoleChooser testing
             if (userManager.FindUserByName<ApplicationUser>(ObjectSpace, "Admin") == null)
             {
-                // Set a password if the standard authentication type is used
                 string EmptyPassword = "";
                 _ = userManager.CreateUser<ApplicationUser>(ObjectSpace, "Admin", EmptyPassword, (user) =>
                 {
-                    // Add the Administrators role to the user
                     user.Roles.Add(adminRole);
+                    user.Roles.Add(defaultRole);
+                    user.Roles.Add(hrRole);
+                    user.Roles.Add(salesRole);
                 });
             }
 
-            // Create HR Manager role with limited access
-            var hrRole = CreateHrRole();
-
-            // Create Sales role
-            var salesRole = CreateSalesRole();
-
-            // Create demo users
+            // HrManager gets both HR and Sales for role switching demo
             if (userManager.FindUserByName<ApplicationUser>(ObjectSpace, "HrManager") == null)
             {
                 _ = userManager.CreateUser<ApplicationUser>(ObjectSpace, "HrManager", "", (user) =>
                 {
                     user.Roles.Add(defaultRole);
                     user.Roles.Add(hrRole);
+                    user.Roles.Add(salesRole);
                 });
             }
 
