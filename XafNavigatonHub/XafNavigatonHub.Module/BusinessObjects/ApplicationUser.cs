@@ -2,13 +2,14 @@
 using DevExpress.ExpressApp.Security;
 using DevExpress.Persistent.Base;
 using DevExpress.Persistent.BaseImpl.EF.PermissionPolicy;
+using RoleChooser.Security;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace XafNavigatonHub.Module.BusinessObjects
 {
     [DefaultProperty(nameof(UserName))]
-    public class ApplicationUser : PermissionPolicyUser, ISecurityUserWithLoginInfo, ISecurityUserLockout
+    public class ApplicationUser : RoleChooserUserBase, ISecurityUserWithLoginInfo, ISecurityUserLockout
     {
         [Browsable(false)]
         public virtual int AccessFailedCount { get; set; }
