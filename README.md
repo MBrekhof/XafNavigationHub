@@ -1,5 +1,7 @@
 # XafNavigatonHub
 
+![Architecture Overview](docs/architecture.png)
+
 A **Navigation Hub / Launchpad** for DevExpress XAF that replaces sidebar navigation with a card-based dashboard. Users land on a styled home screen with categorized button tiles that open different functional areas. Supports both Blazor Server and WinForms frontends.
 
 ## Features
