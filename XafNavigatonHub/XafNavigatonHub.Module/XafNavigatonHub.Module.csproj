@@ -45,6 +45,9 @@
       <PrivateAssets>none</PrivateAssets>
       <IncludeAssets>all</IncludeAssets>
     </PackageReference>
-    
+
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\XafRoleChooser\src\RoleChooser\RoleChooser.csproj" />
   </ItemGroup>
 </Project>
