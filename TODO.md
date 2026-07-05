@@ -1,31 +1,17 @@
-# TODO
+# ContextBoard — TODO
 
-Track all pending, in-progress, and completed tasks here.
+Generated from the board (source of truth) — do not hand-edit; run export_markdown.
 
-## Pending
+## Todo
 
-- [ ] Phase 2: Runtime admin UI for hub config (CRUD business objects instead of Model Editor)
+#### RC-001: WinForms RoleChooser multi-select parity
 
-## Completed
+The login-time "Active Roles" chooser works on WinForms now (no longer crashes), but you can only select ONE role — the generic `Application.CreateListView` grid defaults to single-row select, unlike Blazor's checkbox list. Worse, `ChooseRolesAction_Execute` reads the selected ROWS (`PopupWindowViewSelectedObjects`) rather than the `ActiveRoleSelection.IsActive` column, so even the visible checkbox column wouldn't drive the result.
 
-- [x] RoleChooser integration PoC (`rolechooser` branch) — dynamic role switching filters hub cards
-- [x] Split demo entities into individual files with `[NavigationItem]` group attributes
-- [x] Fix unpin security error + add "x" unpin button on pinned cards (both platforms)
-- [x] WinForms dark theme support (SVG palette colors)
-- [x] Blazor dark theme support (DX Design System CSS variables)
-- [x] Demo business objects, roles, users, and seed data
-- [x] Fix permission-based button filtering (Enabled/Active check)
-- [x] Fix tab title ("Main" instead of "NavigationHub_DashboardView")
-- [x] WinForms Hub ViewItem (owner-draw UserControl with painted cards)
-- [x] WinForms Hub Tab Non-Closable (DocumentManager TabbedView)
-- [x] Drag & Drop pinning (HTML5 drag API on Blazor)
-- [x] External URL button support
-- [x] Fix hub card icons (ImageLoader instead of static paths)
-- [x] Enable TabbedMDI on both platforms
-- [x] Define Application Model extensions (IModelNavigationHub, IModelHubCategory, IModelHubButton)
-- [x] Create UserHubPreference business object
-- [x] Create NavigationHubController (role filtering, navigation, pin CRUD)
-- [x] Create Blazor NavigationHub Razor component
-- [x] Register hub as DashboardView and startup navigation item
-- [x] Add sample hub configuration in module model
-- [x] Prevent closing NavigationHub tab in Blazor TabbedMDI
+Fix in the RoleChooser library: enable grid multi-select / checkbox-row mode on WinForms, or switch the Execute handler to read `IsActive` instead of row selection.
+
+Repo: C:\projects\XafRoleChooser — src/RoleChooser/Controllers/RoleChooserWindowController.cs (shared lib, master).
+
+#### NAV-001: Phase 2 — runtime admin UI for hub config
+
+Replace Model-Editor-only hub configuration with CRUD business objects (categories / buttons / pins) so the hub layout can be edited at runtime instead of in `Model.DesignedDiffs.xafml`.
