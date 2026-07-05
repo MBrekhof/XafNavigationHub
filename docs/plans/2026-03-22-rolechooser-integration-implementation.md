@@ -13,27 +13,27 @@
 ### Task 1: Add Project Reference
 
 **Files:**
-- Modify: `XafNavigatonHub/XafNavigatonHub.Module/XafNavigatonHub.Module.csproj`
+- Modify: `XafNavigationHub/XafNavigationHub.Module/XafNavigationHub.Module.csproj`
 
 **Step 1: Add the project reference**
 
-Add to the `<ItemGroup>` in `XafNavigatonHub.Module.csproj`:
+Add to the `<ItemGroup>` in `XafNavigationHub.Module.csproj`:
 
 ```xml
 <ProjectReference Include="..\..\..\..\xafrolechooser\src\RoleChooser\RoleChooser.csproj" />
 ```
 
-This relative path goes from `XafNavigatonHub/XafNavigatonHub.Module/` up to `C:\projects\` then into `xafrolechooser\src\RoleChooser\`.
+This relative path goes from `XafNavigationHub/XafNavigationHub.Module/` up to `C:\projects\` then into `xafrolechooser\src\RoleChooser\`.
 
 **Step 2: Verify the project builds**
 
-Run: `dotnet build XafNavigatonHub.slnx`
+Run: `dotnet build XafNavigationHub.slnx`
 Expected: Build succeeded, no errors.
 
 **Step 3: Commit**
 
 ```bash
-git add XafNavigatonHub/XafNavigatonHub.Module/XafNavigatonHub.Module.csproj
+git add XafNavigationHub/XafNavigationHub.Module/XafNavigationHub.Module.csproj
 git commit -m "feat: add RoleChooser project reference"
 ```
 
@@ -42,7 +42,7 @@ git commit -m "feat: add RoleChooser project reference"
 ### Task 2: Change ApplicationUser Base Class
 
 **Files:**
-- Modify: `XafNavigatonHub/XafNavigatonHub.Module/BusinessObjects/ApplicationUser.cs`
+- Modify: `XafNavigationHub/XafNavigationHub.Module/BusinessObjects/ApplicationUser.cs`
 
 **Step 1: Update the base class**
 
@@ -67,13 +67,13 @@ public class ApplicationUser : RoleChooserUserBase, ISecurityUserWithLoginInfo, 
 
 **Step 2: Verify the project builds**
 
-Run: `dotnet build XafNavigatonHub.slnx`
+Run: `dotnet build XafNavigationHub.slnx`
 Expected: Build succeeded. `RoleChooserUserBase` extends `PermissionPolicyUser`, so all existing code compiles unchanged.
 
 **Step 3: Commit**
 
 ```bash
-git add XafNavigatonHub/XafNavigatonHub.Module/BusinessObjects/ApplicationUser.cs
+git add XafNavigationHub/XafNavigationHub.Module/BusinessObjects/ApplicationUser.cs
 git commit -m "feat: change ApplicationUser base to RoleChooserUserBase"
 ```
 
@@ -82,7 +82,7 @@ git commit -m "feat: change ApplicationUser base to RoleChooserUserBase"
 ### Task 3: Register RoleChooser in Blazor Startup
 
 **Files:**
-- Modify: `XafNavigatonHub/XafNavigatonHub.Blazor.Server/Startup.cs`
+- Modify: `XafNavigationHub/XafNavigationHub.Blazor.Server/Startup.cs`
 
 **Step 1: Add using and DI registration**
 
@@ -101,20 +101,20 @@ services.AddXaf(Configuration, builder =>
 
 In the `builder.Modules` chain, add `.Add<RoleChooser.RoleChooserModule>()` before the platform-specific module (line 57-58):
 ```csharp
-.Add<XafNavigatonHub.Module.XafNavigatonHubModule>()
+.Add<XafNavigationHub.Module.XafNavigationHubModule>()
 .Add<RoleChooser.RoleChooserModule>()
-.Add<XafNavigatonHubBlazorModule>();
+.Add<XafNavigationHubBlazorModule>();
 ```
 
 **Step 3: Verify the project builds**
 
-Run: `dotnet build XafNavigatonHub.slnx`
+Run: `dotnet build XafNavigationHub.slnx`
 Expected: Build succeeded.
 
 **Step 4: Commit**
 
 ```bash
-git add XafNavigatonHub/XafNavigatonHub.Blazor.Server/Startup.cs
+git add XafNavigationHub/XafNavigationHub.Blazor.Server/Startup.cs
 git commit -m "feat: register RoleChooser module in Blazor startup"
 ```
 
@@ -123,7 +123,7 @@ git commit -m "feat: register RoleChooser module in Blazor startup"
 ### Task 4: Register RoleChooser in WinForms Startup
 
 **Files:**
-- Modify: `XafNavigatonHub/XafNavigatonHub.Win/Startup.cs`
+- Modify: `XafNavigationHub/XafNavigationHub.Win/Startup.cs`
 
 **Step 1: Add using and DI registration**
 
@@ -135,27 +135,27 @@ using RoleChooser;
 In `BuildApplication()`, add `builder.Services.AddRoleChooser();` right before `builder.UseApplication<...>()` (line 28):
 ```csharp
 builder.Services.AddRoleChooser();
-builder.UseApplication<XafNavigatonHubWindowsFormsApplication>();
+builder.UseApplication<XafNavigationHubWindowsFormsApplication>();
 ```
 
 **Step 2: Add module registration**
 
 In the `builder.Modules` chain, add `.Add<RoleChooser.RoleChooserModule>()` before the platform-specific module (line 53-54):
 ```csharp
-.Add<XafNavigatonHub.Module.XafNavigatonHubModule>()
+.Add<XafNavigationHub.Module.XafNavigationHubModule>()
 .Add<RoleChooser.RoleChooserModule>()
-.Add<XafNavigatonHubWinModule>();
+.Add<XafNavigationHubWinModule>();
 ```
 
 **Step 3: Verify the project builds**
 
-Run: `dotnet build XafNavigatonHub.slnx`
+Run: `dotnet build XafNavigationHub.slnx`
 Expected: Build succeeded.
 
 **Step 4: Commit**
 
 ```bash
-git add XafNavigatonHub/XafNavigatonHub.Win/Startup.cs
+git add XafNavigationHub/XafNavigationHub.Win/Startup.cs
 git commit -m "feat: register RoleChooser module in WinForms startup"
 ```
 
@@ -164,7 +164,7 @@ git commit -m "feat: register RoleChooser module in WinForms startup"
 ### Task 5: Update Seed Data for Multi-Role Users
 
 **Files:**
-- Modify: `XafNavigatonHub/XafNavigatonHub.Module/DatabaseUpdate/Updater.cs`
+- Modify: `XafNavigationHub/XafNavigationHub.Module/DatabaseUpdate/Updater.cs`
 
 **Step 1: Give Admin all roles**
 
@@ -203,19 +203,19 @@ if (userManager.FindUserByName<ApplicationUser>(ObjectSpace, "HrManager") == nul
 
 **Step 3: Delete the existing LocalDB database** (so seed data re-runs)
 
-Run: `sqlcmd -S "(localdb)\mssqllocaldb" -Q "DROP DATABASE IF EXISTS [XafNavigatonHub]"`
+Run: `sqlcmd -S "(localdb)\mssqllocaldb" -Q "DROP DATABASE IF EXISTS [XafNavigationHub]"`
 
 If `sqlcmd` is not available, the app will auto-create a fresh DB on first run since the old one's users won't match.
 
 **Step 4: Verify the project builds**
 
-Run: `dotnet build XafNavigatonHub.slnx`
+Run: `dotnet build XafNavigationHub.slnx`
 Expected: Build succeeded.
 
 **Step 5: Commit**
 
 ```bash
-git add XafNavigatonHub/XafNavigatonHub.Module/DatabaseUpdate/Updater.cs
+git add XafNavigationHub/XafNavigationHub.Module/DatabaseUpdate/Updater.cs
 git commit -m "feat: give demo users multiple roles for RoleChooser testing"
 ```
 
@@ -225,7 +225,7 @@ git commit -m "feat: give demo users multiple roles for RoleChooser testing"
 
 **Step 1: Run the Blazor app**
 
-Run: `dotnet run --project XafNavigatonHub/XafNavigatonHub.Blazor.Server`
+Run: `dotnet run --project XafNavigationHub/XafNavigationHub.Blazor.Server`
 Expected: App starts, database is created/updated.
 
 **Step 2: Log in as HrManager (empty password)**
@@ -250,7 +250,7 @@ Expected: All cards return.
 
 **Step 1: Run the WinForms app**
 
-Run: `dotnet run --project XafNavigatonHub/XafNavigatonHub.Win`
+Run: `dotnet run --project XafNavigationHub/XafNavigationHub.Win`
 
 **Step 2: Repeat the same test as Task 6** with HrManager user.
 

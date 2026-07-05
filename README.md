@@ -1,4 +1,4 @@
-# XafNavigatonHub
+# XafNavigationHub
 
 ![Architecture Overview](docs/architecture.png)
 
@@ -28,15 +28,15 @@ A **Navigation Hub / Launchpad** for DevExpress XAF that replaces sidebar naviga
 2. Ensure your DevExpress NuGet feed is configured
 3. Build the solution:
    ```bash
-   dotnet build XafNavigatonHub.slnx
+   dotnet build XafNavigationHub.slnx
    ```
 4. Run the Blazor Server app:
    ```bash
-   dotnet run --project XafNavigatonHub/XafNavigatonHub.Blazor.Server
+   dotnet run --project XafNavigationHub/XafNavigationHub.Blazor.Server
    ```
    Or the WinForms app:
    ```bash
-   dotnet run --project XafNavigatonHub/XafNavigatonHub.Win
+   dotnet run --project XafNavigationHub/XafNavigationHub.Win
    ```
 5. Log in with one of the demo accounts (empty passwords in Debug mode):
    - **Admin** — full access (all roles: Administrators, HR, Sales)
@@ -48,9 +48,9 @@ A **Navigation Hub / Launchpad** for DevExpress XAF that replaces sidebar naviga
 
 | Project | Description |
 |---------|-------------|
-| `XafNavigatonHub.Module` | Shared module: business objects, controllers, model extensions, database updater |
-| `XafNavigatonHub.Blazor.Server` | Blazor Server frontend with Razor component hub |
-| `XafNavigatonHub.Win` | WinForms frontend with owner-draw painted hub |
+| `XafNavigationHub.Module` | Shared module: business objects, controllers, model extensions, database updater |
+| `XafNavigationHub.Blazor.Server` | Blazor Server frontend with Razor component hub |
+| `XafNavigationHub.Win` | WinForms frontend with owner-draw painted hub |
 
 ## How It Works
 
@@ -69,7 +69,7 @@ The project includes demo business objects (Employee, Department, Customer, Prod
 
 ## Database
 
-Uses SQL Server LocalDB. XAF creates and updates the database automatically on first run. Default connection string: `(localdb)\mssqllocaldb`, catalog `XafNavigatonHub`.
+Uses SQL Server LocalDB. XAF creates and updates the database automatically on first run. Default connection string: `(localdb)\mssqllocaldb`, catalog `XafNavigationHub`.
 
 ## Configuration
 

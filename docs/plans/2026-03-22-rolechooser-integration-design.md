@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-22
 **Branch:** `rolechooser`
-**Goal:** Prove that XafRoleChooser works with XafNavigatonHub — switching roles dynamically filters hub cards.
+**Goal:** Prove that XafRoleChooser works with XafNavigationHub — switching roles dynamically filters hub cards.
 
 ## Approach
 
@@ -12,11 +12,11 @@ Project reference from NavigationHub.Module to the RoleChooser module at `C:\pro
 
 ### 1. Project Reference
 
-`XafNavigatonHub.Module.csproj` gets a `<ProjectReference>` to the RoleChooser project (relative path).
+`XafNavigationHub.Module.csproj` gets a `<ProjectReference>` to the RoleChooser project (relative path).
 
 ### 2. ApplicationUser Base Class
 
-`XafNavigatonHub.Module/BusinessObjects/ApplicationUser.cs`:
+`XafNavigationHub.Module/BusinessObjects/ApplicationUser.cs`:
 - Change `PermissionPolicyUser` to `RoleChooserUserBase`
 - Add `using RoleChooser.Security;`
 
@@ -24,13 +24,13 @@ Project reference from NavigationHub.Module to the RoleChooser module at `C:\pro
 
 ### 3. Blazor Startup
 
-`XafNavigatonHub.Blazor.Server/Startup.cs`:
+`XafNavigationHub.Blazor.Server/Startup.cs`:
 - `services.AddRoleChooser();` in `ConfigureServices()`
 - `.Add<RoleChooserModule>()` in `builder.Modules` chain
 
 ### 4. WinForms Startup
 
-`XafNavigatonHub.Win/Startup.cs`:
+`XafNavigationHub.Win/Startup.cs`:
 - `builder.Services.AddRoleChooser();` in `BuildApplication()`
 - `.Add<RoleChooserModule>()` in `builder.Modules` chain
 

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Application>
+  <Options UIType="TabbedMDI"
+         FormStyle="Ribbon"
+         RestoreTabbedMdiLayout="True"
+         ShowTabImage="True"
+	 VirtualScrollingEnabled="True">
+  </Options>
+  <NavigationItems NavigationStyle="Accordion" StartupNavigationItem="NavigationHub_NavItem">
+    <Items>
+      <Item Id="NavigationHub_NavItem" Caption="Home"
+        ViewId="NavigationHub_DashboardView" IsNewNode="True" Index="0"
+        ImageName="Home" />
+    </Items>
+  </NavigationItems>
+  <Views>
+    <DashboardView Id="NavigationHub_DashboardView" Caption="Main" IsNewNode="True">
+      <Items>
+        <ControlDetailItem Id="NavigationHubControl" Caption=" "
+          ControlTypeName="XafNavigationHub.Blazor.Server.Editors.NavigationHubComponent"
+          IsNewNode="True" />
+      </Items>
+      <Layout>
+        <LayoutGroup Id="Main" ShowCaption="False" IsNewNode="True">
+          <LayoutItem Id="NavigationHubControl" ViewItem="NavigationHubControl"
+            ShowCaption="False" IsNewNode="True" />
+        </LayoutGroup>
+      </Layout>
+    </DashboardView>
+  </Views>
+</Application>

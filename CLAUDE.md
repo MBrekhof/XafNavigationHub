@@ -17,28 +17,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-XafNavigatonHub is a **Navigation Hub / Launchpad** — a DevExpress XAF application that replaces sidebar navigation with a card-based dashboard. Built on .NET 8 with DevExpress v25.2.3, EF Core, SQL Server (LocalDB), with Blazor Server and WinForms frontends.
+XafNavigationHub is a **Navigation Hub / Launchpad** — a DevExpress XAF application that replaces sidebar navigation with a card-based dashboard. Built on .NET 8 with DevExpress v25.2.3, EF Core, SQL Server (LocalDB), with Blazor Server and WinForms frontends.
 
 ## Solution Structure
 
-- **XafNavigatonHub.Module** — Platform-agnostic: business objects, controllers, model extensions, database updater. Both frontends reference this.
-- **XafNavigatonHub.Blazor.Server** — Blazor Server frontend. `NavigationHubComponent.razor` is the hub UI.
-- **XafNavigatonHub.Win** — WinForms frontend. `NavigationHubControl.cs` is the owner-draw hub UI.
+- **XafNavigationHub.Module** — Platform-agnostic: business objects, controllers, model extensions, database updater. Both frontends reference this.
+- **XafNavigationHub.Blazor.Server** — Blazor Server frontend. `NavigationHubComponent.razor` is the hub UI.
+- **XafNavigationHub.Win** — WinForms frontend. `NavigationHubControl.cs` is the owner-draw hub UI.
 
-Solution file: `XafNavigatonHub.slnx` (XML-based solution format).
+Solution file: `XafNavigationHub.slnx` (XML-based solution format).
 
 ## Build & Run
 
 ```bash
-dotnet build XafNavigatonHub.slnx
-dotnet run --project XafNavigatonHub/XafNavigatonHub.Blazor.Server
-dotnet run --project XafNavigatonHub/XafNavigatonHub.Win
+dotnet build XafNavigationHub.slnx
+dotnet run --project XafNavigationHub/XafNavigationHub.Blazor.Server
+dotnet run --project XafNavigationHub/XafNavigationHub.Win
 ```
 
 ## Database
 
-- EF Core with `XafNavigatonHubEFCoreDbContext` (SQL Server LocalDB)
-- Connection string in `appsettings.json`: `(localdb)\mssqllocaldb`, catalog `XafNavigatonHub`
+- EF Core with `XafNavigationHubEFCoreDbContext` (SQL Server LocalDB)
+- Connection string in `appsettings.json`: `(localdb)\mssqllocaldb`, catalog `XafNavigationHub`
 - XAF handles schema updates via `ModuleUpdater` (`DatabaseUpdate/Updater.cs`)
 - Debug builds seed Admin, HrManager, SalesRep users with empty passwords
 

@@ -22,8 +22,8 @@
 ### Task 1: Enable TabbedMDI on Both Platforms
 
 **Files:**
-- Modify: `XafNavigatonHub/XafNavigatonHub.Blazor.Server/Model.xafml`
-- Modify: `XafNavigatonHub/XafNavigatonHub.Win/Model.xafml`
+- Modify: `XafNavigationHub/XafNavigationHub.Blazor.Server/Model.xafml`
+- Modify: `XafNavigationHub/XafNavigationHub.Win/Model.xafml`
 
 **Step 1: Set UIType to TabbedMDI in Blazor Model.xafml**
 
@@ -49,13 +49,13 @@ Open `Model.xafml` in the Win project and add/update the Options node:
 
 **Step 3: Build and verify**
 
-Run: `dotnet build XafNavigatonHub.slnx`
+Run: `dotnet build XafNavigationHub.slnx`
 Expected: Build succeeds.
 
 **Step 4: Commit**
 
 ```bash
-git add XafNavigatonHub/XafNavigatonHub.Blazor.Server/Model.xafml XafNavigatonHub/XafNavigatonHub.Win/Model.xafml
+git add XafNavigationHub/XafNavigationHub.Blazor.Server/Model.xafml XafNavigationHub/XafNavigationHub.Win/Model.xafml
 git commit -m "feat: enable TabbedMDI on both Blazor and WinForms"
 ```
 
@@ -64,18 +64,18 @@ git commit -m "feat: enable TabbedMDI on both Blazor and WinForms"
 ### Task 2: Define Application Model Extensions for Hub Configuration
 
 **Files:**
-- Modify: `XafNavigatonHub/XafNavigatonHub.Module/Module.cs`
-- Create: `XafNavigatonHub/XafNavigatonHub.Module/Model/IModelNavigationHub.cs`
+- Modify: `XafNavigationHub/XafNavigationHub.Module/Module.cs`
+- Create: `XafNavigationHub/XafNavigationHub.Module/Model/IModelNavigationHub.cs`
 
 **Step 1: Create the model interfaces**
 
-Create `XafNavigatonHub/XafNavigatonHub.Module/Model/IModelNavigationHub.cs`:
+Create `XafNavigationHub/XafNavigationHub.Module/Model/IModelNavigationHub.cs`:
 
 ```csharp
 using System.ComponentModel;
 using DevExpress.ExpressApp.Model;
 
-namespace XafNavigatonHub.Module.Model;
+namespace XafNavigationHub.Module.Model;
 
 public interface IModelNavigationHubExtension : IModelNode
 {
@@ -123,7 +123,7 @@ public interface IModelHubButton : IModelNode
 
 **Step 2: Register model extension in Module.cs**
 
-Add `ExtendModelInterfaces` override to `XafNavigatonHubModule`:
+Add `ExtendModelInterfaces` override to `XafNavigationHubModule`:
 
 ```csharp
 public override void ExtendModelInterfaces(ModelInterfaceExtenders extenders)
@@ -133,17 +133,17 @@ public override void ExtendModelInterfaces(ModelInterfaceExtenders extenders)
 }
 ```
 
-Add the using: `using XafNavigatonHub.Module.Model;`
+Add the using: `using XafNavigationHub.Module.Model;`
 
 **Step 3: Build and verify**
 
-Run: `dotnet build XafNavigatonHub.slnx`
+Run: `dotnet build XafNavigationHub.slnx`
 Expected: Build succeeds. Model Editor should now show a NavigationHub node under Application.
 
 **Step 4: Commit**
 
 ```bash
-git add XafNavigatonHub/XafNavigatonHub.Module/Model/IModelNavigationHub.cs XafNavigatonHub/XafNavigatonHub.Module/Module.cs
+git add XafNavigationHub/XafNavigationHub.Module/Model/IModelNavigationHub.cs XafNavigationHub/XafNavigationHub.Module/Module.cs
 git commit -m "feat: add Application Model extensions for NavigationHub config"
 ```
 
@@ -152,19 +152,19 @@ git commit -m "feat: add Application Model extensions for NavigationHub config"
 ### Task 3: Create the UserHubPreference Business Object
 
 **Files:**
-- Create: `XafNavigatonHub/XafNavigatonHub.Module/BusinessObjects/UserHubPreference.cs`
-- Modify: `XafNavigatonHub/XafNavigatonHub.Module/BusinessObjects/XafNavigatonHubDbContext.cs`
+- Create: `XafNavigationHub/XafNavigationHub.Module/BusinessObjects/UserHubPreference.cs`
+- Modify: `XafNavigationHub/XafNavigationHub.Module/BusinessObjects/XafNavigationHubDbContext.cs`
 
 **Step 1: Create UserHubPreference entity**
 
-Create `XafNavigatonHub/XafNavigatonHub.Module/BusinessObjects/UserHubPreference.cs`:
+Create `XafNavigationHub/XafNavigationHub.Module/BusinessObjects/UserHubPreference.cs`:
 
 ```csharp
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Security;
 using DevExpress.Persistent.BaseImpl.EF;
 
-namespace XafNavigatonHub.Module.BusinessObjects;
+namespace XafNavigationHub.Module.BusinessObjects;
 
 public class UserHubPreference : BaseObject
 {
@@ -176,7 +176,7 @@ public class UserHubPreference : BaseObject
 
 **Step 2: Add DbSet to context**
 
-In `XafNavigatonHubEFCoreDbContext`, add:
+In `XafNavigationHubEFCoreDbContext`, add:
 
 ```csharp
 public DbSet<UserHubPreference> UserHubPreferences { get; set; }
@@ -197,13 +197,13 @@ defaultRole.AddTypePermissionsRecursively<UserHubPreference>(
 
 **Step 4: Build and verify**
 
-Run: `dotnet build XafNavigatonHub.slnx`
+Run: `dotnet build XafNavigationHub.slnx`
 Expected: Build succeeds.
 
 **Step 5: Commit**
 
 ```bash
-git add XafNavigatonHub/XafNavigatonHub.Module/BusinessObjects/UserHubPreference.cs XafNavigatonHub/XafNavigatonHub.Module/BusinessObjects/XafNavigatonHubDbContext.cs XafNavigatonHub/XafNavigatonHub.Module/DatabaseUpdate/Updater.cs
+git add XafNavigationHub/XafNavigationHub.Module/BusinessObjects/UserHubPreference.cs XafNavigationHub/XafNavigationHub.Module/BusinessObjects/XafNavigationHubDbContext.cs XafNavigationHub/XafNavigationHub.Module/DatabaseUpdate/Updater.cs
 git commit -m "feat: add UserHubPreference business object for pinned favorites"
 ```
 
@@ -212,7 +212,7 @@ git commit -m "feat: add UserHubPreference business object for pinned favorites"
 ### Task 4: Create the Hub Controller (Platform-Agnostic Logic)
 
 **Files:**
-- Create: `XafNavigatonHub/XafNavigatonHub.Module/Controllers/NavigationHubController.cs`
+- Create: `XafNavigationHub/XafNavigationHub.Module/Controllers/NavigationHubController.cs`
 
 **Step 1: Create the controller**
 
@@ -225,10 +225,10 @@ This `WindowController` runs in the main window. It:
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Actions;
 using DevExpress.ExpressApp.SystemModule;
-using XafNavigatonHub.Module.BusinessObjects;
-using XafNavigatonHub.Module.Model;
+using XafNavigationHub.Module.BusinessObjects;
+using XafNavigationHub.Module.Model;
 
-namespace XafNavigatonHub.Module.Controllers;
+namespace XafNavigationHub.Module.Controllers;
 
 public class NavigationHubController : WindowController
 {
@@ -377,13 +377,13 @@ public class HubButtonData
 
 **Step 2: Build and verify**
 
-Run: `dotnet build XafNavigatonHub.slnx`
+Run: `dotnet build XafNavigationHub.slnx`
 Expected: Build succeeds.
 
 **Step 3: Commit**
 
 ```bash
-git add XafNavigatonHub/XafNavigatonHub.Module/Controllers/NavigationHubController.cs
+git add XafNavigationHub/XafNavigationHub.Module/Controllers/NavigationHubController.cs
 git commit -m "feat: add NavigationHubController with role filtering and pin management"
 ```
 
@@ -392,18 +392,18 @@ git commit -m "feat: add NavigationHubController with role filtering and pin man
 ### Task 5: Create the Blazor Hub ViewItem and Razor Component
 
 **Files:**
-- Create: `XafNavigatonHub/XafNavigatonHub.Blazor.Server/Editors/NavigationHubComponent.razor`
-- Create: `XafNavigatonHub/XafNavigatonHub.Blazor.Server/Editors/NavigationHubViewItem.cs`
+- Create: `XafNavigationHub/XafNavigationHub.Blazor.Server/Editors/NavigationHubComponent.razor`
+- Create: `XafNavigationHub/XafNavigationHub.Blazor.Server/Editors/NavigationHubViewItem.cs`
 
 **Step 1: Create the Razor component**
 
 Create `NavigationHubComponent.razor` — the card grid UI with categories and pin support:
 
 ```razor
-@namespace XafNavigatonHub.Blazor.Server.Editors
+@namespace XafNavigationHub.Blazor.Server.Editors
 
 @using DevExpress.ExpressApp.Blazor.Editors
-@using XafNavigatonHub.Module.Controllers
+@using XafNavigationHub.Module.Controllers
 
 <div class="navigation-hub" style="padding: 24px; overflow-y: auto;">
     @if (PinnedButtons.Any())
@@ -525,9 +525,9 @@ using DevExpress.ExpressApp.Blazor.Components;
 using DevExpress.ExpressApp.Editors;
 using DevExpress.ExpressApp.Model;
 using Microsoft.AspNetCore.Components;
-using XafNavigatonHub.Module.Controllers;
+using XafNavigationHub.Module.Controllers;
 
-namespace XafNavigatonHub.Blazor.Server.Editors;
+namespace XafNavigationHub.Blazor.Server.Editors;
 
 public interface IModelNavigationHubViewItem : IModelViewItem;
 
@@ -645,13 +645,13 @@ public class NavigationHubComponentModel : ComponentModelBase
 
 **Step 3: Build and verify**
 
-Run: `dotnet build XafNavigatonHub.slnx`
+Run: `dotnet build XafNavigationHub.slnx`
 Expected: Build succeeds.
 
 **Step 4: Commit**
 
 ```bash
-git add XafNavigatonHub/XafNavigatonHub.Blazor.Server/Editors/NavigationHubComponent.razor XafNavigatonHub/XafNavigatonHub.Blazor.Server/Editors/NavigationHubViewItem.cs
+git add XafNavigationHub/XafNavigationHub.Blazor.Server/Editors/NavigationHubComponent.razor XafNavigationHub/XafNavigationHub.Blazor.Server/Editors/NavigationHubViewItem.cs
 git commit -m "feat: add Blazor NavigationHub ViewItem and Razor component"
 ```
 
@@ -660,7 +660,7 @@ git commit -m "feat: add Blazor NavigationHub ViewItem and Razor component"
 ### Task 6: Register the Hub as a DashboardView and Startup Navigation Item
 
 **Files:**
-- Modify: `XafNavigatonHub/XafNavigatonHub.Blazor.Server/Model.xafml`
+- Modify: `XafNavigationHub/XafNavigationHub.Blazor.Server/Model.xafml`
 
 **Step 1: Add the DashboardView and navigation item in Model.xafml**
 
@@ -674,7 +674,7 @@ Add to the Blazor `Model.xafml`:
     <DashboardView Id="NavigationHub_DashboardView">
       <Items>
         <ControlDetailItem Id="NavigationHubControl"
-          ControlTypeName="XafNavigatonHub.Blazor.Server.Editors.NavigationHubComponent" />
+          ControlTypeName="XafNavigationHub.Blazor.Server.Editors.NavigationHubComponent" />
       </Items>
     </DashboardView>
   </Views>
@@ -689,13 +689,13 @@ Add to the Blazor `Model.xafml`:
 
 **Step 2: Build and verify**
 
-Run: `dotnet build XafNavigatonHub.slnx`
+Run: `dotnet build XafNavigationHub.slnx`
 Expected: Build succeeds.
 
 **Step 3: Commit**
 
 ```bash
-git add XafNavigatonHub/XafNavigatonHub.Blazor.Server/Model.xafml
+git add XafNavigationHub/XafNavigationHub.Blazor.Server/Model.xafml
 git commit -m "feat: register NavigationHub DashboardView as startup navigation item"
 ```
 
@@ -704,7 +704,7 @@ git commit -m "feat: register NavigationHub DashboardView as startup navigation 
 ### Task 7: Add Sample Hub Configuration in Module Model
 
 **Files:**
-- Modify: `XafNavigatonHub/XafNavigatonHub.Module/Model.DesignedDiffs.xafml`
+- Modify: `XafNavigationHub/XafNavigationHub.Module/Model.DesignedDiffs.xafml`
 
 **Step 1: Add sample hub categories and buttons**
 
@@ -725,12 +725,12 @@ This provides a working example that developers can modify in the Model Editor. 
 
 **Step 2: Build and verify**
 
-Run: `dotnet build XafNavigatonHub.slnx`
+Run: `dotnet build XafNavigationHub.slnx`
 
 **Step 3: Commit**
 
 ```bash
-git add XafNavigatonHub/XafNavigatonHub.Module/Model.DesignedDiffs.xafml
+git add XafNavigationHub/XafNavigationHub.Module/Model.DesignedDiffs.xafml
 git commit -m "feat: add sample hub configuration in module model"
 ```
 
@@ -739,7 +739,7 @@ git commit -m "feat: add sample hub configuration in module model"
 ### Task 8: Ensure Hub Tab is Non-Closable (Blazor)
 
 **Files:**
-- Create: `XafNavigatonHub/XafNavigatonHub.Blazor.Server/Controllers/HubTabController.cs`
+- Create: `XafNavigationHub/XafNavigationHub.Blazor.Server/Controllers/HubTabController.cs`
 
 **Step 1: Create HubTabController**
 
@@ -749,7 +749,7 @@ This controller hooks into the `ITabbedMdiMainFormTemplate.Closing` event to pre
 using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Blazor.Templates;
 
-namespace XafNavigatonHub.Blazor.Server.Controllers;
+namespace XafNavigationHub.Blazor.Server.Controllers;
 
 public class HubTabController : WindowController
 {
@@ -794,12 +794,12 @@ public class HubTabController : WindowController
 
 **Step 2: Build and verify**
 
-Run: `dotnet build XafNavigatonHub.slnx`
+Run: `dotnet build XafNavigationHub.slnx`
 
 **Step 3: Commit**
 
 ```bash
-git add XafNavigatonHub/XafNavigatonHub.Blazor.Server/Controllers/HubTabController.cs
+git add XafNavigationHub/XafNavigationHub.Blazor.Server/Controllers/HubTabController.cs
 git commit -m "feat: prevent closing the NavigationHub tab in Blazor TabbedMDI"
 ```
 
