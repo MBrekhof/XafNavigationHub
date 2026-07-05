@@ -1,40 +1,60 @@
 # Session Handoff
 
+## ⏭️ IMMEDIATE NEXT STEP — finish the folder rename (do this BEFORE reopening Claude)
+
+The project was renamed `XafNavigatonHub` → `XafNavigationHub` (typo fix). Code, projects,
+`.slnx`, namespaces, assemblies, docs, and the **GitHub repo** are already renamed, committed,
+and pushed. **Only two filesystem folders still carry the old spelling** — and they can't be
+renamed from inside a Claude session (the session's shell is anchored to the folder).
+
+**Close Claude Code and any editors/Explorer windows on the folder, then run in a plain PowerShell:**
+
+```powershell
+Rename-Item -Path "C:\projects\XafNavigatonHub" -NewName "XafNavigationHub"
+Rename-Item -Path "$env:USERPROFILE\.claude\projects\C--projects-XafNavigatonHub" -NewName "C--projects-XafNavigationHub"
+```
+
+(First = repo folder. Second = Claude's memory/transcripts for this project, re-keyed to the new
+path so memory carries over.)
+
+**Then reopen Claude Code in `C:\projects\XafNavigationHub`** and verify:
+
+```bash
+dotnet build XafNavigationHub.slnx -c Debug   # must succeed
+```
+
+The RoleChooser cross-repo reference is relative (`..\..\..\XafRoleChooser`) and unaffected by
+the folder rename. No hardcoded absolute paths exist in the repo (verified).
+
 ## Current State
 
-**Branch: `rolechooser`** — Phase 1 complete + RoleChooser integration PoC.
+**Branch: `rolechooser`** — Phase 1 + RoleChooser PoC, now on DevExpress 25.2.5, project renamed.
 
-### What's Implemented
+### Done this session (all committed + pushed to `rolechooser`)
 
-- **Navigation Hub** — card-based dashboard replacing sidebar navigation, registered as DashboardView startup item
-- **Model extensions** — `IModelNavigationHub`, `IModelHubCategory`, `IModelHubButton` with `ExternalUrl` support
-- **NavigationHubController** (Module) — role-filtered hub data via `ShowNavigationItemAction`, programmatic navigation, per-user pin CRUD via `UserHubPreference`
-- **Blazor frontend** — `NavigationHubComponent.razor` with drag & drop pinning, external URLs via JSInterop, dark theme via `--dxds-*` CSS variables with `--bs-*` fallbacks
-- **WinForms frontend** — `NavigationHubControl` (owner-draw `XtraUserControl` with GDI+ painting), SVG icon rendering via `SvgPaletteHelper`, dark theme via `CommonSkins.GetSkin().SvgPalettes` palette colors ("Paint", "Paint High", "Brush", "Paint Shadow")
-- **Non-closable hub tab** — `HubTabController` (Blazor) and `HubTabWinController` (Win)
-- **Demo data** — 7 business objects in individual files with `[NavigationItem]` group attributes (HR, Sales, Project Management), seed data, multi-role users
-- **Permission filtering** — buttons hidden based on `ChoiceActionItem.Enabled && Active` state, external URL buttons bypass permission check
-- **RoleChooser integration** — XafRoleChooser module integrated via project reference. Users can switch active roles at runtime; hub cards update dynamically
+1. **DevExpress 25.2.3 → 25.2.5 upgrade** (commit `1545900`). The converter had left the Win
+   project with `Microsoft.Extensions.Configuration` 8.0.0 while bumping `...Configuration.Json`
+   to 9.0.0 → NU1605 package-downgrade → Win build failed. Fixed by aligning `Configuration` to
+   9.0.0. Full solution builds green. (This was the "upgrade broke the Win version" report.)
+2. **Typo rename `Navigaton` → `Navigation`** (commit `fd565a8`). Solution, all 3 projects,
+   namespaces, `XafNavigationHubEFCoreDbContext`, assemblies, `.xafml` model, config, docs.
+   `Navigaton` is a unique substring so XAF's correctly-spelled `Navigation` APIs were untouched.
+   GitHub repo renamed to `MBrekhof/XafNavigationHub` (old URL redirects); `origin` updated.
+   **Filesystem folders NOT yet renamed — see top of file.**
 
-### RoleChooser Integration Details
+### What was already implemented (unchanged)
 
-- `ApplicationUser` base class changed from `PermissionPolicyUser` to `RoleChooserUserBase` (no schema impact)
-- `RoleChooserModule` + `AddRoleChooser()` registered in both Blazor and WinForms startup
-- Project reference: `../../../XafRoleChooser/src/RoleChooser/RoleChooser.csproj` (cross-repo, requires XafRoleChooser at `C:\projects\XafRoleChooser`)
-- Demo users: Admin has all 4 roles, HrManager has Default+HR+Sales, SalesRep has Default+Sales
-- Blazor confirmed working. WinForms needs manual verification.
-- Decision: **not merged to main** — cross-repo project reference breaks standalone builds. Branch kept as reference for wlncentral integration.
-
-### Latest Changes
-
-- Integrated XafRoleChooser module (project reference, base class, DI, module registration)
-- Split `DemoEntities.cs` into 7 individual files with `[NavigationItem]` attributes
-- Updated nav permission paths in Updater.cs to match new groups (HR, Sales, Project Management)
-- Updated HOW_TO_IMPLEMENT.md with RoleChooser section and NavigationItem path notes
+- Navigation Hub card dashboard (Blazor + WinForms), model extensions, `NavigationHubController`,
+  per-user pinning via `UserHubPreference`, permission filtering, dark theme both platforms.
+- RoleChooser integration (base class `RoleChooserUserBase`, module registration, project ref to
+  `C:\projects\XafRoleChooser`). Blazor confirmed; WinForms still needs manual verification.
+- Decision stands: **not merged to main** — cross-repo project reference breaks standalone builds.
 
 ## Next Steps
 
-- **wlncentral integration**: Bring both NavigationHub and RoleChooser modules into `C:\projects\wlncentral`
-- **Phase 2**: Runtime admin UI for hub configuration (business objects instead of Model Editor)
-- Optional: Blazor drag & drop for WinForms (WinForms currently supports right-click pin/unpin only)
-- Optional: CSS isolation for Blazor component (`.razor.css`)
+- **Finish the folder rename** (top of file) — then it's fully consistent.
+- User mentioned "several things" this session but we only covered the Win build fix + the rename.
+  **Ask what the remaining items are.**
+- WinForms RoleChooser manual verification still outstanding.
+- **Phase 2**: Runtime admin UI for hub config (business objects instead of Model Editor).
+- **wlncentral integration**: bring NavigationHub + RoleChooser into `C:\projects\wlncentral`.
