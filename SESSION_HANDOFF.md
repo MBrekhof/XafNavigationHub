@@ -60,10 +60,13 @@ RoleChooser master is on origin; blocker 1 (out-of-repo project reference) remai
 
 ## Next Steps
 
-- **RoleChooser RC-007 / Hub RC-001** — fix the `OptionsSelection` reflection in
-  `C:\Projects\XafRoleChooser\src\RoleChooser\Controllers\RoleChooserWindowController.cs`, rebuild
-  the Hub, log in as Admin on WinForms and confirm the hub tab renders + checkboxes work. Until
-  then the WinForms Admin experience on this branch is broken.
+- **RoleChooser RC-007 / Hub RC-001 — fixed, one check left.** RoleChooser (master, pushed)
+  now resolves `OptionsSelection` most-derived-first; verified in this Hub's Win app: Admin logon →
+  chooser with checkbox column → OK → hub renders, 0 exceptions (screenshot). **Not yet seen:
+  ticking two roles with the mouse and the hub re-filtering** — synthetic input didn't reach the
+  modal chooser from scripts (details in RoleChooser's handoff); quickest is by hand: run
+  `XafNavigationHub.Win`, log in as Admin, tick HR + Sales, OK, expect HR/Sales cards only. Then
+  confirm RC-001 (378) here and RC-007 (1190) on the RoleChooser board.
 - **HUB-001** — done; sits in Review for your confirm.
 - **BUILD-001** — decouple RoleChooser (NuGet / submodule / vendor) before merging to `main`.
 - **NAV-001** — Phase 2 runtime admin UI for hub config.
