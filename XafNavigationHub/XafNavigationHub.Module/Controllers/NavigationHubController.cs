@@ -112,7 +112,7 @@ public class NavigationHubController : WindowController
 
     public List<string> GetPinnedItemIds()
     {
-        if (SecuritySystem.CurrentUserId is not Guid userId)
+        if (Application.Security.UserId is not Guid userId)
             return new List<string>();
 
         using var os = Application.CreateObjectSpace(typeof(UserHubPreference));
@@ -141,7 +141,7 @@ public class NavigationHubController : WindowController
     public void SetPinnedItems(List<string> navigationItemIds)
     {
         if (navigationItemIds == null) return;
-        if (SecuritySystem.CurrentUserId is not Guid userId) return;
+        if (Application.Security.UserId is not Guid userId) return;
 
         using var os = Application.CreateObjectSpace(typeof(UserHubPreference));
         var existing = os.GetObjects<UserHubPreference>(
