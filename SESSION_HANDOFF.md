@@ -44,14 +44,16 @@ renders `Exception occurs while assigning the 'ListView, ID:ActiveRoleSelection_
 Ambiguous match found ...`. Fix is a one-liner in the lib (take the most-derived declaration);
 sketch on card 1190. Not a Hub change.
 
-**Found while testing — HUB-001 (board card 1415, bug, open):** on **Blazor** the hub cards do not
-re-filter after choosing roles in the login-time chooser. Sidebar re-filters (Sales/Reports gone),
-hub keeps Sales & CRM + Administration; toolbar Refresh doesn't help. Root cause:
-`NavigationHubComponent.razor` reads `GetHubData()` only in `OnInitialized`; RoleChooser's Blazor
-path re-executes the startup nav item (no-op for the already-open component) and only raises
-`SessionRolesApplied` on WinForms. Pre-existing (= RoleChooser's RC-008 b), not an upgrade
-regression. Fix sketch is on the card (lib: raise the event on every platform; component:
-subscribe → `RefreshData()` + `InvokeAsync(StateHasChanged)`).
+**HUB-001 — found and fixed (card 1415, in Review):** on **Blazor** the hub cards did not
+re-filter after choosing roles in the login-time chooser (sidebar re-filtered, hub kept Sales & CRM
++ Administration; toolbar Refresh didn't help). Root cause: `NavigationHubComponent.razor` read
+`GetHubData()` only in `OnInitialized`; RoleChooser's Blazor path re-executes the startup nav item,
+which does not recreate an already-open component, and it raised `SessionRolesApplied` on WinForms
+only. Fix: XafRoleChooser `c7b1932` raises the event on every platform (before the kept Blazor
+re-execute); Hub `e7db2a1` makes the component subscribe (`IActiveRoleFilter` from
+`ViewItem.Application.ServiceProvider`, `InvokeAsync(RefreshData + StateHasChanged)`, unsubscribe in
+`Dispose`) — same pattern as `NavigationHubWinController`. Verified with Playwright: pick HR only →
+Sales & CRM and Roles cards vanish in place, 0 console errors. Pre-existing (= RoleChooser RC-008 b).
 
 **Board housekeeping:** BUILD-001 body updated — blocker 2 (unpushed RoleChooser commit) is gone,
 RoleChooser master is on origin; blocker 1 (out-of-repo project reference) remains.
@@ -62,8 +64,7 @@ RoleChooser master is on origin; blocker 1 (out-of-repo project reference) remai
   `C:\Projects\XafRoleChooser\src\RoleChooser\Controllers\RoleChooserWindowController.cs`, rebuild
   the Hub, log in as Admin on WinForms and confirm the hub tab renders + checkboxes work. Until
   then the WinForms Admin experience on this branch is broken.
-- **HUB-001** — fix the Blazor in-place refresh (two repos; see card). Do this before anyone
-  relies on RoleChooser + hub on Blazor.
+- **HUB-001** — done; sits in Review for your confirm.
 - **BUILD-001** — decouple RoleChooser (NuGet / submodule / vendor) before merging to `main`.
 - **NAV-001** — Phase 2 runtime admin UI for hub config.
 

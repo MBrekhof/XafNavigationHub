@@ -18,20 +18,6 @@ Prerequisite for merging `rolechooser` → `main`. Remaining blocker:
 
 Since 2026-08-26 both repos are on net10.0 / DevExpress 26.1.4 / EF Core 10.0.11 (UPG-001), so the project reference builds again — but it still couples the Hub to whatever XAF major/minor the sibling checkout happens to be on. Decouple by one of: package RoleChooser as a NuGet (local/private feed) referenced by version (cleanest, unblocks CI); git submodule the XafRoleChooser repo into this one; or vendor the source. Do this once RC-001 is confirmed and a merge is actually wanted. Fix HUB-001 first if the merged branch is expected to work on Blazor with RoleChooser.
 
-#### HUB-001: Blazor hub cards do not re-filter after RoleChooser role selection
-
-Found 2026-08-26 while smoke-testing the 26.1.4 / net10 upgrade (UPG-001), Blazor, Admin login, pick only "HR" in the Active Role Selection popup → OK.
-
-Observed: the sidebar navigation re-filters correctly (Sales / Reports groups disappear), but the hub cards keep showing Sales & CRM (Customers, Orders, Products) and Administration (Users, Roles). The toolbar Refresh action does not re-filter them either. WinForms is fine (6a59f93: NavigationHubWinController subscribes to IActiveRoleFilter.SessionRolesApplied → RefreshData()).
-
-Root cause: `NavigationHubComponent.razor` reads `controller.GetHubData()` only in `OnInitialized` (plus its own pin/unpin). RoleChooser's Blazor path re-executes the startup navigation item (`ShowNavigationItemAction.DoExecute(startupItem)`), which does not recreate the already-open hub component, so nothing re-reads. RoleChooser raises `SessionRolesApplied` only on WinForms (`IsWinFormsApplication` branch in RoleChooserWindowController.ChooseRolesAction_Execute).
-
-Proposed fix (two repos):
-1. XafRoleChooser: call `_roleFilter.NotifySessionRolesApplied()` on every platform (move it out of the WinForms-only branch; keep the Blazor re-execute for consumers without an in-place hub).
-2. Hub Blazor: `NavigationHubComponent` resolves `IActiveRoleFilter` from `ViewItem.Application.ServiceProvider`, subscribes to `SessionRolesApplied` → `RefreshData(); InvokeAsync(StateHasChanged)`, unsubscribes in `Dispose`. Same pattern as the Win controller.
-
-This is RoleChooser's RC-008 b) ("verify hub cards refresh after role switch") — now confirmed as a bug, not a verification item. Pre-existing, not an upgrade regression (nothing in the upgrade touched this path).
-
 ## Review
 
 #### RC-001: WinForms RoleChooser multi-select parity
@@ -46,6 +32,22 @@ Repo: C:\projects\XafRoleChooser — src/RoleChooser/Controllers/RoleChooserWind
 **2026-08-26, Hub on 26.1.4 (UPG-001):** RoleChooser's RC-007 fix (`1c90494`) is in the referenced lib, but on DevExpress 26.1 WinForms it throws `AmbiguousMatchException` (`GridView.OptionsSelection` is re-declared in 26.1, `Type.GetProperty(name)` is ambiguous) inside `ListView.ControlsCreated`. Effect in the Hub: after Admin login the **hub tab shows the exception text instead of the cards**. Details + fix on RoleChooser card 1190. Do not confirm this card until RoleChooser has re-verified on 26.1 WinForms and the Hub's hub tab renders for Admin again.
 
 **Outcome:** Not delivered — closed as a duplicate/misfile, no code change. This is a RoleChooser library fix (src/RoleChooser/Controllers/RoleChooserWindowController.cs), not a NavigationHub one, and it was filed here as "RC-001" which collides with an already-completed card on the XafRoleChooser board. Re-filed on XafRoleChooser (project 10) as card #1190, "RC-007: WinForms RoleChooser multi-select parity", and cited from that repo's TODO.md. Confirm-Done here to retire the duplicate; the work itself is still open on #1190.
+
+#### HUB-001: Blazor hub cards do not re-filter after RoleChooser role selection
+
+Found 2026-08-26 while smoke-testing the 26.1.4 / net10 upgrade (UPG-001), Blazor, Admin login, pick only "HR" in the Active Role Selection popup → OK.
+
+Observed: the sidebar navigation re-filters correctly (Sales / Reports groups disappear), but the hub cards keep showing Sales & CRM (Customers, Orders, Products) and Administration (Users, Roles). The toolbar Refresh action does not re-filter them either. WinForms is fine (6a59f93: NavigationHubWinController subscribes to IActiveRoleFilter.SessionRolesApplied → RefreshData()).
+
+Root cause: `NavigationHubComponent.razor` reads `controller.GetHubData()` only in `OnInitialized` (plus its own pin/unpin). RoleChooser's Blazor path re-executes the startup navigation item (`ShowNavigationItemAction.DoExecute(startupItem)`), which does not recreate the already-open hub component, so nothing re-reads. RoleChooser raises `SessionRolesApplied` only on WinForms (`IsWinFormsApplication` branch in RoleChooserWindowController.ChooseRolesAction_Execute).
+
+Proposed fix (two repos):
+1. XafRoleChooser: call `_roleFilter.NotifySessionRolesApplied()` on every platform (move it out of the WinForms-only branch; keep the Blazor re-execute for consumers without an in-place hub).
+2. Hub Blazor: `NavigationHubComponent` resolves `IActiveRoleFilter` from `ViewItem.Application.ServiceProvider`, subscribes to `SessionRolesApplied` → `RefreshData(); InvokeAsync(StateHasChanged)`, unsubscribes in `Dispose`. Same pattern as the Win controller.
+
+This is RoleChooser's RC-008 b) ("verify hub cards refresh after role switch") — now confirmed as a bug, not a verification item. Pre-existing, not an upgrade regression (nothing in the upgrade touched this path).
+
+**Outcome:** Fixed in two repos: XafRoleChooser c7b1932 (master) — SessionRolesApplied is now raised on every platform, before the kept non-WinForms startup re-execute; XafNavigationHub e7db2a1 (rolechooser) — NavigationHubComponent resolves IActiveRoleFilter from the circuit ServiceProvider, subscribes in OnInitialized → RefreshData + StateHasChanged, unsubscribes in Dispose. Verified with Playwright on Blazor: Admin login, select only HR, OK → Sales & CRM and Roles cards disappear in place, hub matches the sidebar, 0 console errors. WinForms path unchanged (still fires the same event; not re-run — RC-007's AmbiguousMatchException blocks the Admin WinForms path regardless, card 1190).
 
 #### UPG-001: Upgrade to .NET 10, DevExpress 26.1.4, EF Core 10
 
