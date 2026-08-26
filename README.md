@@ -18,8 +18,8 @@ A **Navigation Hub / Launchpad** for DevExpress XAF that replaces sidebar naviga
 
 ## Prerequisites
 
-- .NET 8 SDK
-- DevExpress v25.2.3 NuGet feed configured
+- .NET 10 SDK
+- DevExpress v26.1.4 NuGet feed configured (local feed from the 26.1 install works)
 - SQL Server LocalDB (included with Visual Studio)
 
 ## Getting Started

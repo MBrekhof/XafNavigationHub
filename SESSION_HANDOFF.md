@@ -2,43 +2,82 @@
 
 ## Current State
 
-**Branch: `rolechooser`** — Phase 1 + RoleChooser integration, DevExpress 25.2.5, project renamed
-`XafNavigatonHub` → `XafNavigationHub` (folders + memory dir already renamed; fully consistent).
-Both platforms build clean.
+**Branch: `rolechooser`** — Phase 1 + RoleChooser integration, now on **.NET 10 / DevExpress 26.1.4 /
+EF Core 10.0.11** (UPG-001, 2026-08-26). Both platforms build clean (0 errors, 0 warnings in our
+code) and both were smoke-tested at runtime against the existing `XafNavigationHub` LocalDB.
 
-## Done this session (2026-07-05)
+Open work lives on the ContextBoard (project 11); `TODO.md` / `docs/DONE.md` are board exports.
 
-**Fixed the WinForms crash on RoleChooser role selection / re-logon.**
+## Done this session (2026-08-26)
 
-- Symptom: after picking a role in the login-time "Active Roles" chooser, WinForms threw
-  `An item with the same key has already been added ... Text: Main` on the next re-logon
-  (during DocumentManager layout restore).
-- Root cause: `RoleChooserWindowController.ChooseRolesAction_Execute` re-executed the startup
-  navigation item to refresh the hub. On WinForms TabbedMDI that opened a **second** "Main"
-  DashboardView tab (the startup tab is already open); the two identical documents got persisted
-  to the `Win` user model diff and crashed layout restore. Blazor refreshes in place → unaffected.
-- Fix (two repos, committed **locally, NOT pushed**):
-  - **XafRoleChooser** `7dbec09` (master): platform-aware `Execute`. WinForms raises the new
-    `IActiveRoleFilter.SessionRolesApplied` event instead of re-navigating; Blazor path unchanged.
-    Platform detected by walking base types for `WinApplication` (no `.Win` reference in the lib).
-  - **XafNavigationHub** `6a59f93` (rolechooser): `NavigationHubWinController` subscribes to
-    `SessionRolesApplied` and calls the hub's existing `RefreshData()` — cards re-filter in the
-    same tab, no duplicate.
-- Verified: 4 logout/login cycles with role selection, no crash, one hub tab per login, cards
-  re-filter in place. Temporary diagnostic instrumentation added then removed.
+**UPG-001 — upgrade to .NET 10 / DX 26.1.4 / EF Core 10** (`5411b15`, `8fcead1`, docs commit after).
+
+- Why now: the sibling `XafRoleChooser` repo moved to net10.0 / 26.1.4 this morning (`9e61a03`),
+  and this branch project-references it — the Hub could not build until it followed. .NET 8 is
+  EOL 2026-11-10 anyway.
+- Recipe (identical to RoleChooser's): TFM `net8.0` → `net10.0` (Win `net10.0-windows`);
+  `DevExpress.*` 25.2.5 → 26.1.4; `Microsoft.EntityFrameworkCore.*` 8.0.18 → 10.0.11;
+  `Microsoft.CodeAnalysis.*` 4.10.0 → 5.0.0; `Microsoft.Data.SqlClient` 6.1.2 → 6.1.6;
+  Win `Microsoft.Extensions.Configuration(.Json)` 9.0.0 → 10.0.11.
+- 26.1 code changes: `WinApplication.UseOldTemplates` removed (line deleted);
+  `PasswordCryptographer.UseSHA1_20K` + `UseSHA512_600K` enabled in both `Program.cs` — 26.1 hashes
+  with SHA512/600K under `CompatibilityMode.Latest` and would otherwise refuse the pre-upgrade
+  users. Verified: Admin (empty password, SHA1-era row) logs in on both platforms.
+- `XAF0035` (new 26.1 analyzer warning): `SecuritySystem.CurrentUserId` in the shared
+  `NavigationHubController` → `Application.Security.UserId` (per-circuit `ISecurityStrategyBase`,
+  docs 405775).
+- Verified: Blazor — login, hub renders all categories/cards, RoleChooser popup, 0 console errors
+  (Playwright). WinForms — starts, logs on (SendKeys-driven), **hub renders for `HrManager`**
+  (screenshot: Human Resources + Sales & CRM cards, icons OK). **For `Admin` the hub tab shows an
+  exception instead of cards — see RC-001/RC-007 below; that is RoleChooser's code, not the Hub's.**
+  `eXpressAppFramework.log` reports 0 exceptions in both cases (XAF swallows that one into the
+  document), so a screenshot is the only real check on WinForms.
+- The DB schema needed no update (XAF started against the 25.2-era catalog without a
+  `DatabaseVersionMismatch`).
+
+**Found while testing — RoleChooser RC-007 fails on 26.1 WinForms** (RoleChooser card 1190, in
+Review; Hub card RC-001 / 378 annotated): `EnableCheckBoxRowSelect` does
+`gridView.GetType().GetProperty("OptionsSelection")`; in 26.1 `GridView` re-declares
+`OptionsSelection` (`new`, `GridOptionsSelection`) over the `ColumnView` one, so reflection throws
+`AmbiguousMatchException` inside `ListView.ControlsCreated`. Effect: Admin's hub tab on WinForms
+renders `Exception occurs while assigning the 'ListView, ID:ActiveRoleSelection_ListView' ...
+Ambiguous match found ...`. Fix is a one-liner in the lib (take the most-derived declaration);
+sketch on card 1190. Not a Hub change.
+
+**Found while testing — HUB-001 (board card 1415, bug, open):** on **Blazor** the hub cards do not
+re-filter after choosing roles in the login-time chooser. Sidebar re-filters (Sales/Reports gone),
+hub keeps Sales & CRM + Administration; toolbar Refresh doesn't help. Root cause:
+`NavigationHubComponent.razor` reads `GetHubData()` only in `OnInitialized`; RoleChooser's Blazor
+path re-executes the startup nav item (no-op for the already-open component) and only raises
+`SessionRolesApplied` on WinForms. Pre-existing (= RoleChooser's RC-008 b), not an upgrade
+regression. Fix sketch is on the card (lib: raise the event on every platform; component:
+subscribe → `RefreshData()` + `InvokeAsync(StateHasChanged)`).
+
+**Board housekeeping:** BUILD-001 body updated — blocker 2 (unpushed RoleChooser commit) is gone,
+RoleChooser master is on origin; blocker 1 (out-of-repo project reference) remains.
 
 ## Next Steps
 
-- **Push** the two local commits when ready — currently local only (`7dbec09`, `6a59f93`).
-- **RC-001** (TODO): WinForms chooser only allows single-role selection; Blazor has checkbox
-  multi-select. Separate RoleChooser parity gap, not the crash.
-- **NAV-001** (TODO): Phase 2 runtime admin UI for hub config.
-- **wlncentral integration**: bring NavigationHub + RoleChooser into `C:\projects\wlncentral`.
+- **RoleChooser RC-007 / Hub RC-001** — fix the `OptionsSelection` reflection in
+  `C:\Projects\XafRoleChooser\src\RoleChooser\Controllers\RoleChooserWindowController.cs`, rebuild
+  the Hub, log in as Admin on WinForms and confirm the hub tab renders + checkboxes work. Until
+  then the WinForms Admin experience on this branch is broken.
+- **HUB-001** — fix the Blazor in-place refresh (two repos; see card). Do this before anyone
+  relies on RoleChooser + hub on Blazor.
+- **BUILD-001** — decouple RoleChooser (NuGet / submodule / vendor) before merging to `main`.
+- **NAV-001** — Phase 2 runtime admin UI for hub config.
 
 ## Notes
 
+- Blazor smoke recipe: from `XafNavigationHub/XafNavigationHub.Blazor.Server`, run
+  `ASPNETCORE_ENVIRONMENT=Development ASPNETCORE_URLS=http://localhost:5000 bin/Debug/net10.0/XafNavigationHub.Blazor.Server.exe`;
+  Admin / empty password; hub at `/NavigationHub_DashboardView`. WinForms exe:
+  `XafNavigationHub/XafNavigationHub.Win/bin/Debug/net10.0-windows/XafNavigationHub.Win.exe`.
+- EF Core still warns at startup about unspecified decimal store types on the demo entities
+  (`Employee.Salary`, `Product.Price`, `SalesOrder.TotalAmount`) — pre-existing, cosmetic for a
+  demo, add `[Precision(18,2)]` if it ever matters.
 - WinForms user layout is persisted **in the DB** (`ModelDifferenceDbStore(..., "Win")` in
   `WinModule.cs`), not a file. If a corrupted two-"Main"-tab layout ever recurs, clear the `Win`
   row in `ModelDifferences` / `ModelDifferenceAspects` for the affected user.
 - Decision stands: **not merged to main** — the cross-repo project reference to
-  `..\..\..\XafRoleChooser` breaks standalone builds.
+  `..\..\..\XafRoleChooser` breaks standalone builds (BUILD-001).

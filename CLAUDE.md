@@ -17,7 +17,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-XafNavigationHub is a **Navigation Hub / Launchpad** — a DevExpress XAF application that replaces sidebar navigation with a card-based dashboard. Built on .NET 8 with DevExpress v25.2.3, EF Core, SQL Server (LocalDB), with Blazor Server and WinForms frontends.
+XafNavigationHub is a **Navigation Hub / Launchpad** — a DevExpress XAF application that replaces sidebar navigation with a card-based dashboard. Built on .NET 10 with DevExpress v26.1.4, EF Core 10, SQL Server (LocalDB), with Blazor Server and WinForms frontends.
 
 ## Solution Structure
 
