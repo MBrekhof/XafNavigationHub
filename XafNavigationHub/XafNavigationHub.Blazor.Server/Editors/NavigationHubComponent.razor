@@ -2,7 +2,10 @@
 
 @using DevExpress.ExpressApp
 @using DevExpress.ExpressApp.Blazor.Editors
+@using Microsoft.Extensions.DependencyInjection
+@using RoleChooser.Services
 @using XafNavigationHub.Module.Controllers
+@implements IDisposable
 @inject IJSRuntime JSRuntime
 
 <div class="navigation-hub" style="padding: 24px; overflow-y: auto; height: 100%;"
@@ -284,9 +287,30 @@
     private NavigationHubController GetController() =>
         ViewItem?.Application?.MainWindow?.GetController<NavigationHubController>();
 
+    private IActiveRoleFilter roleFilter;
+
     protected override void OnInitialized()
     {
         RefreshData();
+
+        // The hub is the already-open startup view, so nothing recreates this component when the
+        // login-time RoleChooser applies a role selection — re-read the cards on its signal
+        // (HUB-001). Same pattern as NavigationHubWinController on WinForms.
+        roleFilter = ViewItem?.Application?.ServiceProvider?.GetService<IActiveRoleFilter>();
+        if (roleFilter != null)
+            roleFilter.SessionRolesApplied += OnSessionRolesApplied;
+    }
+
+    private void OnSessionRolesApplied(object sender, EventArgs e)
+        => InvokeAsync(() => { RefreshData(); StateHasChanged(); });
+
+    public void Dispose()
+    {
+        if (roleFilter != null)
+        {
+            roleFilter.SessionRolesApplied -= OnSessionRolesApplied;
+            roleFilter = null;
+        }
     }
 
     private void RefreshData()
