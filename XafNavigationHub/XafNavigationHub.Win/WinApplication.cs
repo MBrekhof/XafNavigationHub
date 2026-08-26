@@ -23,7 +23,6 @@ namespace XafNavigationHub.Win
             SplashScreen = new DXSplashScreen(typeof(XafSplashScreen), new DefaultOverlayFormOptions());
             ApplicationName = "XafNavigationHub";
             CheckCompatibilityType = DevExpress.ExpressApp.CheckCompatibilityType.DatabaseSchema;
-            UseOldTemplates = false;
             DatabaseVersionMismatch += XafNavigationHubWindowsFormsApplication_DatabaseVersionMismatch;
             CustomizeLanguagesList += XafNavigationHubWindowsFormsApplication_CustomizeLanguagesList;
         }
