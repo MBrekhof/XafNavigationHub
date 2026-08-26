@@ -24,3 +24,4 @@ test_*.py
 *.png
 !**/Images/*.png
 !docs/*.png
+.playwright-mcp/
